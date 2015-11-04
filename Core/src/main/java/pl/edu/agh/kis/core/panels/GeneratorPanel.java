@@ -5,13 +5,16 @@
  */
 package pl.edu.agh.kis.core.panels;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.File;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import pl.edu.agh.kis.core.resources.BpmnFilter;
 
 /**
  *
- * @author T530
+ * @author Jakub Piotrowski
  */
 public class GeneratorPanel extends javax.swing.JPanel {
 
@@ -75,6 +78,11 @@ public class GeneratorPanel extends javax.swing.JPanel {
         add(chooseBpmnButton, gridBagConstraints);
 
         org.openide.awt.Mnemonics.setLocalizedText(chooseLogicFormulasButton, org.openide.util.NbBundle.getMessage(GeneratorPanel.class, "GeneratorPanel.chooseLogicFormulasButton.text")); // NOI18N
+        chooseLogicFormulasButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chooseLogicFormulasButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -181,6 +189,21 @@ public class GeneratorPanel extends javax.swing.JPanel {
             pathTextField.setText(bpmnFile.getAbsolutePath());
         }
     }//GEN-LAST:event_chooseBpmnButtonActionPerformed
+
+    private void chooseLogicFormulasButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseLogicFormulasButtonActionPerformed
+        JDialog dialog = new JDialog();
+        dialog.setModal(true);
+        dialog.setTitle("Formuły logiki temporalnej");
+        dialog.setSize(600, 400);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((dimension.getWidth() - dialog.getWidth()) / 2);
+        int y = (int) ((dimension.getHeight() - dialog.getHeight()) / 2);
+        dialog.setLocation(x, y);
+        
+        dialog.getContentPane().add(new LogicFormulasPanel());
+        dialog.setVisible(true);
+    }//GEN-LAST:event_chooseLogicFormulasButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
