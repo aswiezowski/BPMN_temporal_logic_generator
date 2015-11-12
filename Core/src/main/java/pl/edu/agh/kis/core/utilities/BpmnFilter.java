@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.edu.agh.kis.core.resources;
+package pl.edu.agh.kis.core.utilities;
 
 import java.io.File;
 import javax.swing.filechooser.FileFilter;

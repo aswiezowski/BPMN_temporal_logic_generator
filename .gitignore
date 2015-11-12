@@ -3,3 +3,7 @@
 /BPMN_temporal_logic_generator/BPMN_temporal_logic_generator/Configuration/target/
 /BPMN_temporal_logic_generator/BPMN_temporal_logic_generator/Core/target/
 .directory
+/application/target/
+/branding/target/
+/Configuration/target/
+/Core/target/
