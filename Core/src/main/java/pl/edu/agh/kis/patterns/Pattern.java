@@ -3,13 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.edu.agh.kis.core.data;
+package pl.edu.agh.kis.patterns;
+
+import edu.uci.ics.jung.graph.Graph;
+import pl.edu.agh.kis.core.data.Node;
 
 /**
  *
  * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
  */
-public interface Node {
-
-    public NodeType getType();
+public interface Pattern {
+    
+    Node findPattern(Graph g);
+    
 }

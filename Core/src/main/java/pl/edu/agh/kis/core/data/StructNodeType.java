@@ -9,7 +9,9 @@ package pl.edu.agh.kis.core.data;
  *
  * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
  */
-public interface Node {
+public enum StructNodeType {
 
-    public NodeType getType();
+    SEQENCE, SYNCHRONIZATION, SIMPLE_MERGE, MULTI_CHOICE, PARALLEL_SPLIT, 
+    EXCLUSIVE_CHOICE, IMPLICIT_TERMINATION, MULTIPLE_MERGE, DISCRIMINATOR, 
+    SYNCHRONIZING_MERGE
 }

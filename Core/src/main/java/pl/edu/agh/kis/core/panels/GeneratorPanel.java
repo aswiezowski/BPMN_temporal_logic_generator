@@ -13,7 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import pl.edu.agh.kis.core.data.BPMNParser;
 import pl.edu.agh.kis.core.data.Edge;
-import pl.edu.agh.kis.core.data.Node;
+import pl.edu.agh.kis.core.data.AtomNode;
 import pl.edu.agh.kis.core.utilities.BpmnFilter;
 
 /**
@@ -23,7 +23,7 @@ import pl.edu.agh.kis.core.utilities.BpmnFilter;
 public class GeneratorPanel extends javax.swing.JPanel {
 
     private File bpmnFile;
-    private Graph<Node, Edge> graph;
+    private Graph<AtomNode, Edge> graph;
 
     /**
      * Creates new form GeneratorPanel
