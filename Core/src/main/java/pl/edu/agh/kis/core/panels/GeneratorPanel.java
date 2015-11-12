@@ -10,7 +10,7 @@ import java.awt.Toolkit;
 import java.io.File;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import pl.edu.agh.kis.core.resources.BpmnFilter;
+import pl.edu.agh.kis.core.utilities.BpmnFilter;
 
 /**
  *
