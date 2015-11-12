@@ -54,23 +54,25 @@ public class BPMNParser {
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-            Node n = null;
-            Edge e = null;
-            Matcher taskMatcher = taskPattern.matcher(localName);
-            Matcher eventMatcher = eventPattern.matcher(localName);
-            Matcher gatewayMatcher = gatewayPattern.matcher(localName);
-            if (taskMatcher.matches() || eventMatcher.matches() || gatewayMatcher.matches()) {
-                n = getNode("id");
-                n.setType(Node.NodeType.convertBPMNtoEnum(localName));
-            }
-            if ("sequenceFlow".equalsIgnoreCase(localName)) {
-                e = getEdge("id");
-                Node sourceNode = getNode(attributes.getValue("sourceRef"));
-                Node targetNode = getNode(attributes.getValue("targetRef"));
-                e.setStart(sourceNode);
-                e.setEnd(targetNode);
-                sourceNode.getOutgoing().add(e);
-                targetNode.getIncoming().add(e);
+            if (namespace.equals(uri)) {
+                Node n = null;
+                Edge e = null;
+                Matcher taskMatcher = taskPattern.matcher(localName);
+                Matcher eventMatcher = eventPattern.matcher(localName);
+                Matcher gatewayMatcher = gatewayPattern.matcher(localName);
+                if (taskMatcher.matches() || eventMatcher.matches() || gatewayMatcher.matches()) {
+                    n = getNode(attributes.getValue("id"));
+                    n.setType(Node.NodeType.convertBPMNtoEnum(localName));
+                }
+                if ("sequenceFlow".equalsIgnoreCase(localName)) {
+                    e = getEdge(attributes.getValue("id"));
+                    Node sourceNode = getNode(attributes.getValue("sourceRef"));
+                    Node targetNode = getNode(attributes.getValue("targetRef"));
+                    e.setStart(sourceNode);
+                    e.setEnd(targetNode);
+                    sourceNode.getOutgoing().add(e);
+                    targetNode.getIncoming().add(e);
+                }
             }
         }
 
@@ -94,7 +96,7 @@ public class BPMNParser {
         try {
             SAXParser saxParser = spf.newSAXParser();
             XMLReader xmlReader = saxParser.getXMLReader();
-            xmlReader.setContentHandler(new DefaultHandler());
+            xmlReader.setContentHandler(new BPMNHandler());
             xmlReader.parse(f.getAbsolutePath());
         } catch (SAXException e) {
 

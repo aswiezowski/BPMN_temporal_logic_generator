@@ -5,11 +5,15 @@
  */
 package pl.edu.agh.kis.core.panels;
 
+import edu.uci.ics.jung.graph.Graph;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.io.File;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import pl.edu.agh.kis.core.data.BPMNParser;
+import pl.edu.agh.kis.core.data.Edge;
+import pl.edu.agh.kis.core.data.Node;
 import pl.edu.agh.kis.core.utilities.BpmnFilter;
 
 /**
@@ -19,7 +23,8 @@ import pl.edu.agh.kis.core.utilities.BpmnFilter;
 public class GeneratorPanel extends javax.swing.JPanel {
 
     private File bpmnFile;
-    
+    private Graph<Node, Edge> graph;
+
     /**
      * Creates new form GeneratorPanel
      */
@@ -187,6 +192,8 @@ public class GeneratorPanel extends javax.swing.JPanel {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             bpmnFile = fc.getSelectedFile();
             pathTextField.setText(bpmnFile.getAbsolutePath());
+            BPMNParser parser = new BPMNParser();
+            graph = parser.parseBPMN(bpmnFile);
         }
     }//GEN-LAST:event_chooseBpmnButtonActionPerformed
 
@@ -200,7 +207,7 @@ public class GeneratorPanel extends javax.swing.JPanel {
         int x = (int) ((dimension.getWidth() - dialog.getWidth()) / 2);
         int y = (int) ((dimension.getHeight() - dialog.getHeight()) / 2);
         dialog.setLocation(x, y);
-        
+
         dialog.getContentPane().add(new LogicFormulasPanel());
         dialog.setVisible(true);
     }//GEN-LAST:event_chooseLogicFormulasButtonActionPerformed
