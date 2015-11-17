@@ -29,6 +29,7 @@ public class LogicFormulasPanel extends javax.swing.JPanel {
 
     private static final String DEFULT_FORMULAS = "/pl/edu/agh/kis/core/panels/defaultFormulas.txt";
     private static final String USER_FORMULAS = "/pl/edu/agh/kis/core/panels/userFormulas.txt";
+    private GeneratorPanel parent;
     private Path defaultPath, userPath;
     private BufferedWriter writer;
     private boolean isDefault;
@@ -38,6 +39,11 @@ public class LogicFormulasPanel extends javax.swing.JPanel {
      */
     public LogicFormulasPanel() {
         initComponents();
+    }
+    
+    public LogicFormulasPanel(GeneratorPanel parent) {
+        initComponents();
+        this.parent = parent;
         try {
             defaultPath = Paths.get(getClass().getClassLoader().getResource(DEFULT_FORMULAS).toURI());
             userPath = Paths.get(getClass().getClassLoader().getResource(USER_FORMULAS).toURI());
@@ -196,6 +202,7 @@ public class LogicFormulasPanel extends javax.swing.JPanel {
     private void selectLogicFormulasButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectLogicFormulasButtonActionPerformed
         if (isDefault) {
             // Set parent formula file to defaultFormulas.txt
+            parent.setTemporalLogicFormulas(this.logicFormulasTextPane.getText());
             try {
                 writer = Files.newBufferedWriter(userPath);
                 writer.close();
@@ -205,6 +212,7 @@ public class LogicFormulasPanel extends javax.swing.JPanel {
         } else {
             try {
                 // Set parent formula file to userFormulas.txt
+                parent.setTemporalLogicFormulas(this.logicFormulasTextPane.getText());
                 writer = Files.newBufferedWriter(userPath);
                 writer.write(logicFormulasTextPane.getText());
                 writer.close();

@@ -5,10 +5,19 @@
  */
 package pl.edu.agh.kis.core.panels;
 
+import edu.uci.ics.jung.algorithms.layout.BalloonLayout;
+import edu.uci.ics.jung.algorithms.layout.CircleLayout;
+import edu.uci.ics.jung.algorithms.layout.DAGLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout2;
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.Toolkit;
 import java.io.File;
+import javax.swing.GroupLayout;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import pl.edu.agh.kis.core.data.BPMNParser;
@@ -24,12 +33,16 @@ public class GeneratorPanel extends javax.swing.JPanel {
 
     private File bpmnFile;
     private Graph<Node, Edge> graph;
+    private String temporalLogicFormulas;
+    private boolean canGenerate;
 
     /**
      * Creates new form GeneratorPanel
      */
     public GeneratorPanel() {
         initComponents();
+        generateButton.setEnabled(false);
+        canGenerate = false;
     }
 
     /**
@@ -46,15 +59,15 @@ public class GeneratorPanel extends javax.swing.JPanel {
         chooseBpmnButton = new javax.swing.JButton();
         chooseLogicFormulasButton = new javax.swing.JButton();
         generateButton = new javax.swing.JButton();
-        graphPanel = new javax.swing.JPanel();
+        graphPanel = new ImagePanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        logicFormulasTextField = new javax.swing.JTextPane();
+        logicFormulasTextPane = new javax.swing.JTextPane();
         enlargeLogicFormulasButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        patternsTextField = new javax.swing.JTextPane();
+        patternsTextPane = new javax.swing.JTextPane();
         enlargePatternsButton = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        generatedLogicTextField = new javax.swing.JTextPane();
+        generatedLogicTextPane = new javax.swing.JTextPane();
         enlargeGeneratedLogicButton = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
@@ -95,6 +108,11 @@ public class GeneratorPanel extends javax.swing.JPanel {
         add(chooseLogicFormulasButton, gridBagConstraints);
 
         org.openide.awt.Mnemonics.setLocalizedText(generateButton, org.openide.util.NbBundle.getMessage(GeneratorPanel.class, "GeneratorPanel.generateButton.text")); // NOI18N
+        generateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generateButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
@@ -122,8 +140,8 @@ public class GeneratorPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         add(graphPanel, gridBagConstraints);
 
-        logicFormulasTextField.setEnabled(false);
-        jScrollPane1.setViewportView(logicFormulasTextField);
+        logicFormulasTextPane.setEnabled(false);
+        jScrollPane1.setViewportView(logicFormulasTextPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -142,8 +160,8 @@ public class GeneratorPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 10);
         add(enlargeLogicFormulasButton, gridBagConstraints);
 
-        patternsTextField.setEnabled(false);
-        jScrollPane2.setViewportView(patternsTextField);
+        patternsTextPane.setEnabled(false);
+        jScrollPane2.setViewportView(patternsTextPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -162,8 +180,8 @@ public class GeneratorPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 10);
         add(enlargePatternsButton, gridBagConstraints);
 
-        generatedLogicTextField.setEnabled(false);
-        jScrollPane3.setViewportView(generatedLogicTextField);
+        generatedLogicTextPane.setEnabled(false);
+        jScrollPane3.setViewportView(generatedLogicTextPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -192,8 +210,12 @@ public class GeneratorPanel extends javax.swing.JPanel {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             bpmnFile = fc.getSelectedFile();
             pathTextField.setText(bpmnFile.getAbsolutePath());
-            BPMNParser parser = new BPMNParser();
-            graph = parser.parseBPMN(bpmnFile);
+
+            if (canGenerate) {
+                generateButton.setEnabled(true);
+            } else {
+                canGenerate = true;
+            }
         }
     }//GEN-LAST:event_chooseBpmnButtonActionPerformed
 
@@ -208,11 +230,67 @@ public class GeneratorPanel extends javax.swing.JPanel {
         int y = (int) ((dimension.getHeight() - dialog.getHeight()) / 2);
         dialog.setLocation(x, y);
 
-        dialog.getContentPane().add(new LogicFormulasPanel());
+        dialog.getContentPane().add(new LogicFormulasPanel(this));
         dialog.setVisible(true);
     }//GEN-LAST:event_chooseLogicFormulasButtonActionPerformed
 
+    private void generateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
+        BPMNParser parser = new BPMNParser();
+        graph = parser.parseBPMN(bpmnFile);
+        paintGraph();
+        generateButton.setEnabled(false);
+    }//GEN-LAST:event_generateButtonActionPerformed
 
+    public void setTemporalLogicFormulas(String temporalLogicFormulas) {
+        this.temporalLogicFormulas = temporalLogicFormulas;
+        logicFormulasTextPane.setText(temporalLogicFormulas);
+        if (canGenerate) {
+            generateButton.setEnabled(true);
+        } else {
+            canGenerate = true;
+        }
+    }
+
+    private void paintGraph() {
+        // get graphPanel dimension
+        Dimension dim = graphPanel.getSize();
+        
+        // create layout
+        // Jung layouts - http://jung.sourceforge.net/doc/api/edu/uci/ics/jung/algorithms/layout/package-summary.html
+        Layout<Node, Edge> layout = new FRLayout(graph);
+        layout.setSize(new Dimension((int) dim.getWidth() - (int) (dim.getWidth()*0.05), (int) dim.getHeight() - (int) (dim.getHeight()*0.05)));
+        
+        // remove old JPanel
+        this.remove(graphPanel);
+        
+        // create and add new graphPanel
+        graphPanel = new BasicVisualizationServer<Node, Edge>(layout);
+        graphPanel.setPreferredSize(dim);
+        GridBagConstraints gridBagConstraints;
+        GroupLayout graphPanelLayout = new javax.swing.GroupLayout(graphPanel);
+        graphPanel.setLayout(graphPanelLayout);
+        graphPanelLayout.setHorizontalGroup(
+                graphPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGap(0, 0, Short.MAX_VALUE)
+        );
+        graphPanelLayout.setVerticalGroup(
+                graphPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 8.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        add(graphPanel, gridBagConstraints);
+
+        this.revalidate();
+        this.repaint();
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton chooseBpmnButton;
     private javax.swing.JButton chooseLogicFormulasButton;
@@ -220,13 +298,13 @@ public class GeneratorPanel extends javax.swing.JPanel {
     private javax.swing.JButton enlargeLogicFormulasButton;
     private javax.swing.JButton enlargePatternsButton;
     private javax.swing.JButton generateButton;
-    private javax.swing.JTextPane generatedLogicTextField;
+    private javax.swing.JTextPane generatedLogicTextPane;
     private javax.swing.JPanel graphPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextPane logicFormulasTextField;
+    private javax.swing.JTextPane logicFormulasTextPane;
     private javax.swing.JTextField pathTextField;
-    private javax.swing.JTextPane patternsTextField;
+    private javax.swing.JTextPane patternsTextPane;
     // End of variables declaration//GEN-END:variables
 }
