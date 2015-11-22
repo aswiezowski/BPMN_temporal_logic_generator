@@ -33,7 +33,7 @@ public class ImagePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         readImage();
-        int widthDiff = (int) (this.getWidth() * 0.55);
+        int widthDiff = (int) (this.getWidth() * 0.4);
         int heightDiff = (int) (this.getHeight()* 0.05);
         Image tmp = image.getScaledInstance(this.getWidth() - widthDiff, this.getHeight() - heightDiff, Image.SCALE_SMOOTH);
         image = new BufferedImage(this.getWidth() - widthDiff, this.getHeight() - heightDiff, BufferedImage.TYPE_INT_ARGB);
