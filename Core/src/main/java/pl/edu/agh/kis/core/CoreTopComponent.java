@@ -53,22 +53,22 @@ public final class CoreTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        generatorPanel2 = new pl.edu.agh.kis.core.panels.GeneratorPanel();
+        generatorPanelChanged1 = new pl.edu.agh.kis.core.panels.GeneratorPanel();
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(generatorPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1280, Short.MAX_VALUE)
+            .addComponent(generatorPanelChanged1, javax.swing.GroupLayout.DEFAULT_SIZE, 1280, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(generatorPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE)
+            .addComponent(generatorPanelChanged1, javax.swing.GroupLayout.DEFAULT_SIZE, 720, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private pl.edu.agh.kis.core.panels.GeneratorPanel generatorPanel2;
+    private pl.edu.agh.kis.core.panels.GeneratorPanel generatorPanelChanged1;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
