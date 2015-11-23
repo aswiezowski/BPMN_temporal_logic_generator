@@ -16,6 +16,7 @@ import java.util.*;
 import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import pl.edu.agh.kis.core.utilities.GraphUtils;
 
 /**
  *
@@ -24,7 +25,7 @@ import java.util.regex.Pattern;
 public class BPMNParser {
 
     File f;
-    Graph<AtomNode, Edge> g;
+    Graph<Node, Edge> g;
     final private static String namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL";
 
     class BPMNHandler extends DefaultHandler {
@@ -79,6 +80,11 @@ public class BPMNParser {
         @Override
         public void endDocument() throws SAXException {
             for (AtomNode n : nodes.values()) {
+                if(n.getAtomType()==AtomNodeType.START_EVENT){
+                    GraphUtils.START_NODE = n;
+                } else if(n.getAtomType()==AtomNodeType.END_EVENT){
+                    GraphUtils.END_NODES.add(n);
+                }
                 g.addVertex(n);
             }
             for (Edge e : edges.values()) {
@@ -88,7 +94,7 @@ public class BPMNParser {
 
     }
 
-    public Graph<AtomNode, Edge> parseBPMN(File BPMNFile) {
+    public Graph<Node, Edge> parseBPMN(File BPMNFile) {
         g = new DirectedSparseGraph<>();
         f = BPMNFile;
         SAXParserFactory spf = SAXParserFactory.newInstance();

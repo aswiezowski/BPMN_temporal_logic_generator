@@ -21,20 +21,24 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.rmi.UnexpectedException;
 import java.util.function.Consumer;
 import javax.swing.GroupLayout;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import org.openide.util.Exceptions;
+import pl.edu.agh.kis.core.PatternExtractor;
 import pl.edu.agh.kis.core.data.BPMNParser;
 import pl.edu.agh.kis.core.data.Edge;
 import pl.edu.agh.kis.core.data.AtomNode;
 import pl.edu.agh.kis.core.data.Node;
 import pl.edu.agh.kis.core.utilities.BpmnFilter;
 import pl.edu.agh.kis.core.utilities.ColorStyledDocument;
+import pl.edu.agh.kis.core.utilities.GraphUtils;
 
 /**
  *
@@ -48,7 +52,8 @@ public class GeneratorPanel extends javax.swing.JPanel {
     private BufferedWriter writer;
     private boolean isDefault;
     private File bpmnFile;
-    private Graph<AtomNode, Edge> graph;
+    private Graph<Node, Edge> graph;
+    private PatternExtractor patternExtract;
 
     /**
      * Creates new form GeneratorPanel
@@ -57,6 +62,7 @@ public class GeneratorPanel extends javax.swing.JPanel {
         initComponents();
         initResources();
         generateButton.setEnabled(false);
+        patternExtract = new PatternExtractor();
     }
 
     private void initResources() {
@@ -254,6 +260,13 @@ public class GeneratorPanel extends javax.swing.JPanel {
         graph = parser.parseBPMN(bpmnFile);
         paintGraph();
         selectLogicFormulas();
+        try {
+            Node n = patternExtract.extractPatterns(graph, GraphUtils.START_NODE);
+            patternsTextPane.setText(n.toString());
+        } catch (UnexpectedException e) {
+            JOptionPane.showMessageDialog(this, "Error", e.toString(), JOptionPane.ERROR_MESSAGE);
+        }
+
     }//GEN-LAST:event_generateButtonActionPerformed
 
     private void selectLogicFormulas() {
@@ -342,14 +355,14 @@ public class GeneratorPanel extends javax.swing.JPanel {
 
         // create layout
         // Jung layouts - http://jung.sourceforge.net/doc/api/edu/uci/ics/jung/algorithms/layout/package-summary.html
-        Layout<Node, Edge> layout = new FRLayout(graph);
+        Layout<AtomNode, Edge> layout = new FRLayout(graph);
         layout.setSize(new Dimension((int) dim.getWidth() - (int) (dim.getWidth() * 0.05), (int) dim.getHeight() - (int) (dim.getHeight() * 0.05)));
 
         // remove old JPanel
         this.remove(graphPanel);
 
         // create and add new graphPanel
-        graphPanel = new BasicVisualizationServer<Node, Edge>(layout);
+        graphPanel = new BasicVisualizationServer<AtomNode, Edge>(layout);
         graphPanel.addComponentListener(new ComponentAdapter() {
             private Dimension last_size = null;
 
@@ -357,7 +370,7 @@ public class GeneratorPanel extends javax.swing.JPanel {
             public void componentResized(ComponentEvent evt) {
                 Dimension new_size = evt.getComponent().getSize();
                 if (this.last_size == null || !new_size.equals(this.last_size)) {
-                    Layout<Node, Edge> layout = ((BasicVisualizationServer) graphPanel).getGraphLayout();
+                    Layout<AtomNode, Edge> layout = ((BasicVisualizationServer) graphPanel).getGraphLayout();
                     try {
                         layout.setSize(new_size);
                         ((BasicVisualizationServer) graphPanel).setGraphLayout(layout);

@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public class Edge {
 
-    AtomNode start, end;
+    Node start, end;
     String id;
 
     public Edge(String id) {
@@ -24,19 +24,19 @@ public class Edge {
 
     }
 
-    public AtomNode getStart() {
+    public Node getStart() {
         return start;
     }
 
-    public void setStart(AtomNode start) {
+    public void setStart(Node start) {
         this.start = start;
     }
 
-    public AtomNode getEnd() {
+    public Node getEnd() {
         return end;
     }
 
-    public void setEnd(AtomNode end) {
+    public void setEnd(Node end) {
         this.end = end;
     }
 

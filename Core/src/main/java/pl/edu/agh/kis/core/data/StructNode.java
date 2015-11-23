@@ -13,6 +13,18 @@ public class StructNode implements Node {
 
     private Node left, right, inner1, inner2;
     private StructNodeType type;
+
+    public StructNode(Node left, Node right, Node inner1, Node inner2, StructNodeType type) {
+        this.left = left;
+        this.right = right;
+        this.inner1 = inner1;
+        this.inner2 = inner2;
+        this.type = type;
+    }
+
+    public StructNode() {
+    }
+    
     @Override
     public NodeType getType() {
         return NodeType.STRUCT;
@@ -21,7 +33,7 @@ public class StructNode implements Node {
     @Override
     public String toString() {
         String name = null;
-
+        name = type.toString()+"("+left.toString()+(inner1==null?"":","+inner1.toString())+(inner2==null?"":","+inner2.toString())+","+right.toString()+")";
         return name;
     }
 
