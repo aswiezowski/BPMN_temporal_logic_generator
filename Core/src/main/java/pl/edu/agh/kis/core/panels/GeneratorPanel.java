@@ -32,6 +32,7 @@ import org.openide.util.Exceptions;
 import pl.edu.agh.kis.core.data.BPMNParser;
 import pl.edu.agh.kis.core.data.Edge;
 import pl.edu.agh.kis.core.data.AtomNode;
+import pl.edu.agh.kis.core.data.Node;
 import pl.edu.agh.kis.core.utilities.BpmnFilter;
 import pl.edu.agh.kis.core.utilities.ColorStyledDocument;
 
