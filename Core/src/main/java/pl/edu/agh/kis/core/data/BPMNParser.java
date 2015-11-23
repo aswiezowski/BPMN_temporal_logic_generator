@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class BPMNParser {
 
     File f;
-    Graph<Node, Edge> g;
+    Graph<AtomNode, Edge> g;
     final private static String namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL";
 
     class BPMNHandler extends DefaultHandler {
@@ -33,13 +33,13 @@ public class BPMNParser {
         final private Pattern eventPattern = Pattern.compile(".*Event", Pattern.CASE_INSENSITIVE);
         final private Pattern gatewayPattern = Pattern.compile(".*Gateway", Pattern.CASE_INSENSITIVE);
 
-        final private Map<String, Node> nodes = new HashMap<>();
+        final private Map<String, AtomNode> nodes = new HashMap<>();
         final private Map<String, Edge> edges = new HashMap<>();
 
-        private Node getNode(String id) {
-            Node n = nodes.get(id);
+        private AtomNode getNode(String id) {
+            AtomNode n = nodes.get(id);
             if (n == null) {
-                nodes.put(id, n = new Node(id));
+                nodes.put(id, n = new AtomNode(id));
             }
             return n;
         }
@@ -55,19 +55,19 @@ public class BPMNParser {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             if (namespace.equals(uri)) {
-                Node n = null;
+                AtomNode n = null;
                 Edge e = null;
                 Matcher taskMatcher = taskPattern.matcher(localName);
                 Matcher eventMatcher = eventPattern.matcher(localName);
                 Matcher gatewayMatcher = gatewayPattern.matcher(localName);
                 if (taskMatcher.matches() || eventMatcher.matches() || gatewayMatcher.matches()) {
                     n = getNode(attributes.getValue("id"));
-                    n.setType(Node.NodeType.convertBPMNtoEnum(localName));
+                    n.setAtomType(AtomNodeType.convertBPMNtoEnum(localName));
                 }
                 if ("sequenceFlow".equalsIgnoreCase(localName)) {
                     e = getEdge(attributes.getValue("id"));
-                    Node sourceNode = getNode(attributes.getValue("sourceRef"));
-                    Node targetNode = getNode(attributes.getValue("targetRef"));
+                    AtomNode sourceNode = getNode(attributes.getValue("sourceRef"));
+                    AtomNode targetNode = getNode(attributes.getValue("targetRef"));
                     e.setStart(sourceNode);
                     e.setEnd(targetNode);
                     sourceNode.getOutgoing().add(e);
@@ -78,7 +78,7 @@ public class BPMNParser {
 
         @Override
         public void endDocument() throws SAXException {
-            for (Node n : nodes.values()) {
+            for (AtomNode n : nodes.values()) {
                 g.addVertex(n);
             }
             for (Edge e : edges.values()) {
@@ -88,7 +88,7 @@ public class BPMNParser {
 
     }
 
-    public Graph<Node, Edge> parseBPMN(File BPMNFile) {
+    public Graph<AtomNode, Edge> parseBPMN(File BPMNFile) {
         g = new DirectedSparseGraph<>();
         f = BPMNFile;
         SAXParserFactory spf = SAXParserFactory.newInstance();

@@ -9,7 +9,6 @@ package pl.edu.agh.kis.core.data;
  *
  * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
  */
-public interface Node {
-
-    public NodeType getType();
+public enum NodeType {
+    STRUCT, ATOM
 }
