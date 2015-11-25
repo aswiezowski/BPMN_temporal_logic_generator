@@ -9,13 +9,11 @@ import edu.uci.ics.jung.graph.Graph;
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import pl.edu.agh.kis.core.data.AtomNode;
-import pl.edu.agh.kis.core.data.Edge;
 import pl.edu.agh.kis.core.data.Node;
 import pl.edu.agh.kis.core.data.StructNode;
-import pl.edu.agh.kis.core.data.StructNodeType;
 import pl.edu.agh.kis.patterns.Pattern;
+import pl.edu.agh.kis.patterns.Sequence;
 
 /**
  *
@@ -27,6 +25,7 @@ public class PatternExtractor {
 
     static {
         PATTERN_PRIORITY = new ArrayList<>();
+        PATTERN_PRIORITY.add(new Sequence());
     }
 
     public Node extractPatterns(Graph g, AtomNode startNode) throws  UnexpectedException {
