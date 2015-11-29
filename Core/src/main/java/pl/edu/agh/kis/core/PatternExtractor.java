@@ -35,6 +35,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 import pl.edu.agh.kis.patterns.ImplicitTermination;
 import pl.edu.agh.kis.patterns.Pattern;
 import pl.edu.agh.kis.patterns.Sequence;
+import pl.edu.agh.kis.patterns.SimpleMerge;
 
 /**
  *
@@ -47,6 +48,7 @@ public class PatternExtractor {
     static {
         PATTERN_PRIORITY = new ArrayList<>();
         PATTERN_PRIORITY.add(new ImplicitTermination());
+        PATTERN_PRIORITY.add(new SimpleMerge());
         PATTERN_PRIORITY.add(new Sequence());
     }
 
