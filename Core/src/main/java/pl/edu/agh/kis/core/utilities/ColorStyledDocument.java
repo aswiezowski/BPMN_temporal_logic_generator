@@ -18,10 +18,20 @@ import javax.swing.text.StyleContext;
  */
 public class ColorStyledDocument extends DefaultStyledDocument {
 
+    private static final String LOGIC_FORMULAS_NAME = "Synchronizing|-Merge|Discriminator|Multiple|Implicit|-Termination|Exclusive|-Choice|Parallel|-Split|Multi|-Choice|Simple|Synchronization|Sequence";
+    private static final String PATTERNS_NAME = "SEQENCE|SYNCHRONIZATION|SIMPLE_MERGE|MULTI_CHOICE|PARALLEL_SPLIT|EXCLUSIVE_CHOICE|IMPLICIT_TERMINATION|MULTIPLE_MERGE|DISCRIMINATOR|SYNCHRONIZING_MERGE";
     private final StyleContext cont = StyleContext.getDefaultStyleContext();
     private final AttributeSet attr = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.BLUE);
     private final AttributeSet attrBlack = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
+    private String coloredFormulas;
 
+    public ColorStyledDocument(boolean isLogicFormulas) {
+        if(isLogicFormulas) {
+            coloredFormulas = LOGIC_FORMULAS_NAME;
+        } else {
+            coloredFormulas = PATTERNS_NAME;
+        }
+    }
     @Override
     public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
         super.insertString(offset, str, a);
@@ -37,7 +47,7 @@ public class ColorStyledDocument extends DefaultStyledDocument {
 
         while (wordR <= after) {
             if (wordR == after || String.valueOf(text.charAt(wordR)).matches("\\W")) {
-                if (text.substring(wordL, wordR).matches("(\\W)*(Synchronizing|-Merge|Discriminator|Multiple|Implicit|-Termination|Exclusive|-Choice|Parallel|-Split|Multi|-Choice|Simple|Synchronization|Sequence)")) {
+                if (text.substring(wordL, wordR).matches("(\\W)*(" + coloredFormulas + ")")) {
                     setCharacterAttributes(wordL, wordR - wordL, attr, false);
                 } else {
                     setCharacterAttributes(wordL, wordR - wordL, attrBlack, false);
@@ -59,7 +69,7 @@ public class ColorStyledDocument extends DefaultStyledDocument {
         }
         int after = findFirstNonWordChar(text, offs);
 
-        if (text.substring(before, after).matches("(\\W)*(Synchronizing|-Merge|Discriminator|Multiple|Implicit|-Termination|Exclusive|-Choice|Parallel|-Split|Multi|-Choice|Simple|Synchronization|Sequence)")) {
+        if (text.substring(before, after).matches("(\\W)*(" + coloredFormulas + ")")) {
             setCharacterAttributes(before, after - before, attr, false);
         } else {
             setCharacterAttributes(before, after - before, attrBlack, false);

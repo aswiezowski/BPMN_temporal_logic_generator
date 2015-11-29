@@ -80,6 +80,9 @@
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="patternsTextPane">
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="patternsTextPane.setDocument(new ColorStyledDocument(false));"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -97,7 +100,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="generatedLogicTextPane">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="generatedLogicTextPane.setDocument(new ColorStyledDocument());"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="generatedLogicTextPane.setDocument(new ColorStyledDocument(true));"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -116,7 +119,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="logicFormulasTextPane">
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="logicFormulasTextPane.setDocument(new ColorStyledDocument());"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="logicFormulasTextPane.setDocument(new ColorStyledDocument(true));"/>
           </AuxValues>
         </Component>
       </SubComponents>

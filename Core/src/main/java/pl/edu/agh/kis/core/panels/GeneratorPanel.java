@@ -161,6 +161,7 @@ public class GeneratorPanel extends javax.swing.JPanel {
         add(graphPanel, gridBagConstraints);
 
         jScrollPane2.setViewportView(patternsTextPane);
+        patternsTextPane.setDocument(new ColorStyledDocument(false));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -173,7 +174,7 @@ public class GeneratorPanel extends javax.swing.JPanel {
         add(jScrollPane2, gridBagConstraints);
 
         jScrollPane3.setViewportView(generatedLogicTextPane);
-        generatedLogicTextPane.setDocument(new ColorStyledDocument());
+        generatedLogicTextPane.setDocument(new ColorStyledDocument(true));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -187,7 +188,7 @@ public class GeneratorPanel extends javax.swing.JPanel {
         add(jScrollPane3, gridBagConstraints);
 
         jScrollPane1.setViewportView(logicFormulasTextPane);
-        logicFormulasTextPane.setDocument(new ColorStyledDocument());
+        logicFormulasTextPane.setDocument(new ColorStyledDocument(true));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
