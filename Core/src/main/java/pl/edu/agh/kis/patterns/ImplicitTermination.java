@@ -25,10 +25,16 @@
  */
 package pl.edu.agh.kis.patterns;
 
+import edu.uci.ics.jung.algorithms.filters.FilterUtils;
 import edu.uci.ics.jung.graph.Graph;
 import java.rmi.UnexpectedException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import pl.edu.agh.kis.core.PatternExtractor;
 import pl.edu.agh.kis.core.data.AtomNode;
+import pl.edu.agh.kis.core.data.AtomNodeType;
+import pl.edu.agh.kis.core.data.Edge;
 import pl.edu.agh.kis.core.data.Node;
 import pl.edu.agh.kis.core.data.NodeType;
 import pl.edu.agh.kis.core.data.StructNode;
@@ -39,23 +45,29 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
  *
  * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
  */
-public class Sequence extends Pattern {
+public class ImplicitTermination extends Pattern {
 
-    
-    
     @Override
     public StructNode findPattern(Graph g, Node start) throws BadPatternException, UnexpectedException {
         StructNode snode = null;
-        if (g.getOutEdges(start).size() == 1) {
-            PatternExtractor pe = new PatternExtractor();
-            Node node = pe.extractPatterns(g, (AtomNode) g.getSuccessors(start).iterator().next());
-            if(node.getType()==NodeType.STRUCT){
-                StructNode tree = (StructNode) node;
-                if(Pattern.isReversePattern(tree)){
-                    return tree;
-                }
+        if (g.getOutEdges(start).size() == 2 && start.getType() == NodeType.ATOM && ((AtomNode) start).getAtomType() == AtomNodeType.EXCLUSIVE_GATEWAY) {
+            Iterator<Edge> iter = g.getOutEdges(start).iterator();
+            List<Node> pathNodes1 = new ArrayList<>();
+            List<Node> pathNodes2 = new ArrayList<>();
+            AtomNode startPath1 = (AtomNode) iter.next().getEnd();
+            AtomNode startPath2 = (AtomNode) iter.next().getEnd();
+            AtomNode endPath1 = getEndNode(g, startPath1, pathNodes1);
+            AtomNode endPath2 = getEndNode(g, startPath2, pathNodes2);
+            if(endPath1 == null || endPath2 == null || endPath1.getAtomType()!=AtomNodeType.END_EVENT || endPath2.getAtomType()!=AtomNodeType.END_EVENT){
+                return null;
             }
-            snode = new StructNode(start, node, null, null, StructNodeType.SEQENCE);
+            if (endPath1.equals(endPath2)) {
+                throw new UnexpectedException("Paths can not be merged");
+            }
+            Graph subgraph1 = FilterUtils.createInducedSubgraph(pathNodes1, g);
+            Graph subgraph2 = FilterUtils.createInducedSubgraph(pathNodes2, g);
+            PatternExtractor pe = new PatternExtractor();
+            snode = new StructNode(start, pe.extractPatterns(subgraph2, startPath2), pe.extractPatterns(subgraph1, startPath1), null , StructNodeType.IMPLICIT_TERMINATION);
         }
         return snode;
     }

@@ -39,6 +39,7 @@ import pl.edu.agh.kis.core.data.Node;
 import pl.edu.agh.kis.core.utilities.BpmnFilter;
 import pl.edu.agh.kis.core.utilities.ColorStyledDocument;
 import pl.edu.agh.kis.core.utilities.GraphUtils;
+import pl.edu.agh.kis.exceptions.BadPatternException;
 
 /**
  *
@@ -266,6 +267,9 @@ public class GeneratorPanel extends javax.swing.JPanel {
             patternsTextPane.setText(n.toString());
         } catch (UnexpectedException e) {
             JOptionPane.showMessageDialog(this, "Error", e.toString(), JOptionPane.ERROR_MESSAGE);
+        }catch (BadPatternException e) {
+            JOptionPane.showMessageDialog(this, "Bad Pattern", e.getMessage(), JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
 
     }//GEN-LAST:event_generateButtonActionPerformed
