@@ -35,8 +35,10 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 import pl.edu.agh.kis.patterns.ImplicitTermination;
 import pl.edu.agh.kis.patterns.MultipleChoice;
 import pl.edu.agh.kis.patterns.Pattern;
-import pl.edu.agh.kis.patterns.Sequence;
 import pl.edu.agh.kis.patterns.SynchronizingMerge;
+import pl.edu.agh.kis.patterns.Pattern;
+import pl.edu.agh.kis.patterns.Sequence;
+import pl.edu.agh.kis.patterns.SimpleMerge;
 
 /**
  *
@@ -51,6 +53,8 @@ public class PatternExtractor {
 	PATTERN_PRIORITY.add(new SynchronizingMerge());
         PATTERN_PRIORITY.add(new ImplicitTermination());
         PATTERN_PRIORITY.add(new MultipleChoice());
+        PATTERN_PRIORITY.add(new ImplicitTermination());
+        PATTERN_PRIORITY.add(new SimpleMerge());
         PATTERN_PRIORITY.add(new Sequence());
     }
 

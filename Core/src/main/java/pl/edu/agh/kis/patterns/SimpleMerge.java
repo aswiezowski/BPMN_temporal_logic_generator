@@ -25,10 +25,16 @@
  */
 package pl.edu.agh.kis.patterns;
 
+import edu.uci.ics.jung.algorithms.filters.FilterUtils;
 import edu.uci.ics.jung.graph.Graph;
 import java.rmi.UnexpectedException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import pl.edu.agh.kis.core.PatternExtractor;
 import pl.edu.agh.kis.core.data.AtomNode;
+import pl.edu.agh.kis.core.data.AtomNodeType;
+import pl.edu.agh.kis.core.data.Edge;
 import pl.edu.agh.kis.core.data.Node;
 import pl.edu.agh.kis.core.data.NodeType;
 import pl.edu.agh.kis.core.data.StructNode;
@@ -39,26 +45,35 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
  *
  * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
  */
-public class Sequence extends Pattern {
-
+public class SimpleMerge extends Pattern{
     
+    private static boolean inSimpleMerge = false;
     
     @Override
     public StructNode findPattern(Graph g, Node start) throws BadPatternException, UnexpectedException {
         StructNode snode = null;
-        if (g.getOutEdges(start).size() == 1) {
-            PatternExtractor pe = new PatternExtractor();
-            Node node = pe.extractPatterns(g, (AtomNode) g.getSuccessors(start).iterator().next());
-            if(node.getType()==NodeType.STRUCT){
-                StructNode tree = (StructNode) node;
-                if(Pattern.isReversePattern(tree)){
-                    return tree;
-                }
+        if (g.getInEdges(start).size() == 2 && start.getType() == NodeType.ATOM && (((AtomNode) start).getAtomType() == AtomNodeType.EXCLUSIVE_GATEWAY ||
+                ((AtomNode) start).getAtomType() == AtomNodeType.TASK) && !inSimpleMerge){
+            inSimpleMerge = true;
+            Iterator<Edge> iter = g.getInEdges(start).iterator();
+            List<Node> pathNodes1 = new ArrayList<>();
+            List<Node> pathNodes2 = new ArrayList<>();
+            Node endPath1 = iter.next().getStart();
+            Node endPath2 = iter.next().getStart();
+            Node startPath1 = getFirstNode(g, endPath1, pathNodes1);
+            Node startPath2 = getFirstNode(g, endPath2, pathNodes2);
+            if(startPath1 == null || startPath2 == null){
+                return null;
             }
-            snode = new StructNode(start, node, null, null, StructNodeType.SEQUENCE);
-
+            if (startPath1.equals(startPath2)) {
+               throw new UnexpectedException("Paths can not be merged");
+            }
+            Graph subgraph1 = FilterUtils.createInducedSubgraph(pathNodes1, g);
+            Graph subgraph2 = FilterUtils.createInducedSubgraph(pathNodes2, g);
+            PatternExtractor pe = new PatternExtractor();
+            snode = new StructNode(pe.extractPatterns(subgraph2, startPath2)  ,pe.extractPatterns(g, start),  pe.extractPatterns(subgraph1, startPath1), null, StructNodeType.SIMPLE_MERGE);
+            inSimpleMerge = false;
         }
         return snode;
     }
-
 }

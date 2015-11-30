@@ -68,6 +68,7 @@ import pl.edu.agh.kis.core.utilities.GraphUtils;
 import pl.edu.agh.kis.exceptions.BadHeaderException;
 import pl.edu.agh.kis.exceptions.BadPatternException;
 import pl.edu.agh.kis.exceptions.NoLogicPatternDefinition;
+import pl.edu.agh.kis.exceptions.BadPatternException;
 
 /**
  *
@@ -287,8 +288,7 @@ public class GeneratorPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Error", e.getMessage(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         } catch (BadPatternException e) {
-            JOptionPane.showMessageDialog(this, "Bad Pattern", e.getMessage(), JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error", e.toString(), JOptionPane.ERROR_MESSAGE);
         }
 
     }//GEN-LAST:event_generateButtonActionPerformed
