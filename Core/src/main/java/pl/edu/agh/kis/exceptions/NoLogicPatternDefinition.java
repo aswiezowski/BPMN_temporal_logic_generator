@@ -23,41 +23,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package pl.edu.agh.kis.patterns;
+package pl.edu.agh.kis.exceptions;
 
-import edu.uci.ics.jung.graph.Graph;
-import java.rmi.UnexpectedException;
-import pl.edu.agh.kis.core.PatternExtractor;
-import pl.edu.agh.kis.core.data.AtomNode;
-import pl.edu.agh.kis.core.data.Node;
-import pl.edu.agh.kis.core.data.NodeType;
-import pl.edu.agh.kis.core.data.StructNode;
 import pl.edu.agh.kis.core.data.StructNodeType;
-import pl.edu.agh.kis.exceptions.BadPatternException;
 
 /**
  *
- * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
+ * @author Jakub Piotrowski
  */
-public class Sequence extends Pattern {
-
+public class NoLogicPatternDefinition extends Exception{
     
-    
-    @Override
-    public StructNode findPattern(Graph g, Node start) throws BadPatternException, UnexpectedException {
-        StructNode snode = null;
-        if (g.getOutEdges(start).size() == 1) {
-            PatternExtractor pe = new PatternExtractor();
-            Node node = pe.extractPatterns(g, (AtomNode) g.getSuccessors(start).iterator().next());
-            if(node.getType()==NodeType.STRUCT){
-                StructNode tree = (StructNode) node;
-                if(Pattern.isReversePattern(tree)){
-                    return tree;
-                }
-            }
-            snode = new StructNode(start, node, null, null, StructNodeType.SEQUENCE);
-        }
-        return snode;
+    public NoLogicPatternDefinition() {
     }
 
+    public NoLogicPatternDefinition(String message) {
+        super(message);
+    }
+    
+    
+    
 }

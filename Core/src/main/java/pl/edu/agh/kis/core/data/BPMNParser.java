@@ -1,7 +1,27 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (c) 2015, pl.edu.agh
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 package pl.edu.agh.kis.core.data;
 
@@ -20,12 +40,12 @@ import pl.edu.agh.kis.core.utilities.GraphUtils;
 
 /**
  *
- * @author Adam Świeżowski
+ * @author Adam Świeżowski, Jakub Piotrowski
  */
 public class BPMNParser {
 
-    File f;
-    Graph<Node, Edge> g;
+    private File f;
+    private Graph<Node, Edge> g;
     final private static String namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL";
 
     class BPMNHandler extends DefaultHandler {
@@ -33,9 +53,12 @@ public class BPMNParser {
         final private Pattern taskPattern = Pattern.compile(".*task", Pattern.CASE_INSENSITIVE);
         final private Pattern eventPattern = Pattern.compile(".*Event", Pattern.CASE_INSENSITIVE);
         final private Pattern gatewayPattern = Pattern.compile(".*Gateway", Pattern.CASE_INSENSITIVE);
+        final private Pattern eventDefPattern = Pattern.compile(".*EventDefinition", Pattern.CASE_INSENSITIVE);
 
         final private Map<String, AtomNode> nodes = new HashMap<>();
         final private Map<String, Edge> edges = new HashMap<>();
+
+        private AtomNode lastNode = null;
 
         private AtomNode getNode(String id) {
             AtomNode n = nodes.get(id);
@@ -61,9 +84,13 @@ public class BPMNParser {
                 Matcher taskMatcher = taskPattern.matcher(localName);
                 Matcher eventMatcher = eventPattern.matcher(localName);
                 Matcher gatewayMatcher = gatewayPattern.matcher(localName);
+                Matcher eventDefMatcher = eventDefPattern.matcher(localName);
                 if (taskMatcher.matches() || eventMatcher.matches() || gatewayMatcher.matches()) {
                     n = getNode(attributes.getValue("id"));
                     n.setAtomType(AtomNodeType.convertBPMNtoEnum(localName));
+                    if(eventMatcher.matches()){
+                        lastNode = n;
+                    }
                 }
                 if ("sequenceFlow".equalsIgnoreCase(localName)) {
                     e = getEdge(attributes.getValue("id"));
@@ -74,15 +101,28 @@ public class BPMNParser {
                     sourceNode.getOutgoing().add(e);
                     targetNode.getIncoming().add(e);
                 }
+                if (lastNode != null && lastNode.getAtomType() == AtomNodeType.START_EVENT && eventDefMatcher.matches()) {
+                    lastNode.setAtomType(AtomNodeType.EVENT);
+                }
+            }
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) {
+            if (namespace.equals(uri)) {
+                Matcher eventMatcher = eventPattern.matcher(localName);
+                if (eventMatcher.matches()) {
+                    lastNode = null;
+                }
             }
         }
 
         @Override
         public void endDocument() throws SAXException {
             for (AtomNode n : nodes.values()) {
-                if(n.getAtomType()==AtomNodeType.START_EVENT){
+                if (n.getAtomType() == AtomNodeType.START_EVENT) {
                     GraphUtils.START_NODE = n;
-                } else if(n.getAtomType()==AtomNodeType.END_EVENT){
+                } else if (n.getAtomType() == AtomNodeType.END_EVENT) {
                     GraphUtils.END_NODES.add(n);
                 }
                 g.addVertex(n);

@@ -1,7 +1,27 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (c) 2015, pl.edu.agh
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 package pl.edu.agh.kis.core.utilities;
 
@@ -18,8 +38,8 @@ import javax.swing.text.StyleContext;
  */
 public class ColorStyledDocument extends DefaultStyledDocument {
 
-    private static final String LOGIC_FORMULAS_NAME = "Synchronizing|-Merge|Discriminator|Multiple|Implicit|-Termination|Exclusive|-Choice|Parallel|-Split|Multi|-Choice|Simple|Synchronization|Sequence";
-    private static final String PATTERNS_NAME = "SEQENCE|SYNCHRONIZATION|SIMPLE_MERGE|MULTI_CHOICE|PARALLEL_SPLIT|EXCLUSIVE_CHOICE|IMPLICIT_TERMINATION|MULTIPLE_MERGE|DISCRIMINATOR|SYNCHRONIZING_MERGE";
+    private static final String LOGIC_FORMULAS_NAME = "sequence|parallel_split|synchronization|exclusive_choice|simple_merge|multiple_choice|multiple_merge|discriminator|synchronizing_merge|implicit_termination";
+    private static final String PATTERNS_NAME = "sequence|synchronization|simple_merge|multiple_choice|parallel_split|exclusive_choice|implicit_termination|multiple_merge|discriminator|synchronizing_merge";
     private final StyleContext cont = StyleContext.getDefaultStyleContext();
     private final AttributeSet attr = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.BLUE);
     private final AttributeSet attrBlack = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.BLACK);
@@ -47,7 +67,7 @@ public class ColorStyledDocument extends DefaultStyledDocument {
 
         while (wordR <= after) {
             if (wordR == after || String.valueOf(text.charAt(wordR)).matches("\\W")) {
-                if (text.substring(wordL, wordR).matches("(\\W)*(" + coloredFormulas + ")")) {
+                if (text.toLowerCase().substring(wordL, wordR).matches("(\\W)*(" + coloredFormulas + ")")) {
                     setCharacterAttributes(wordL, wordR - wordL, attr, false);
                 } else {
                     setCharacterAttributes(wordL, wordR - wordL, attrBlack, false);
@@ -69,7 +89,7 @@ public class ColorStyledDocument extends DefaultStyledDocument {
         }
         int after = findFirstNonWordChar(text, offs);
 
-        if (text.substring(before, after).matches("(\\W)*(" + coloredFormulas + ")")) {
+        if (text.toLowerCase().substring(before, after).matches("(\\W)*(" + coloredFormulas + ")")) {
             setCharacterAttributes(before, after - before, attr, false);
         } else {
             setCharacterAttributes(before, after - before, attrBlack, false);

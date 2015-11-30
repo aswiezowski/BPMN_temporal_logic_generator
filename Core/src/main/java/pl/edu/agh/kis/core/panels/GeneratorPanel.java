@@ -1,14 +1,36 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (c) 2015, pl.edu.agh
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
 package pl.edu.agh.kis.core.panels;
 
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
+import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -17,17 +39,15 @@ import java.awt.event.ComponentEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.UnexpectedException;
+import java.util.Map;
 import java.util.function.Consumer;
 import javax.swing.GroupLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import org.openide.util.Exceptions;
@@ -35,11 +55,19 @@ import pl.edu.agh.kis.core.PatternExtractor;
 import pl.edu.agh.kis.core.data.BPMNParser;
 import pl.edu.agh.kis.core.data.Edge;
 import pl.edu.agh.kis.core.data.AtomNode;
+import pl.edu.agh.kis.exceptions.BodyArgumentsException;
+import pl.edu.agh.kis.exceptions.DuplicateDefinitionException;
+import pl.edu.agh.kis.core.data.LogicFormula;
 import pl.edu.agh.kis.core.data.Node;
+import pl.edu.agh.kis.core.data.StructNodeType;
+import pl.edu.agh.kis.core.data.TemporalLogicDefinition;
+import pl.edu.agh.kis.core.data.TemporalLogicParser;
 import pl.edu.agh.kis.core.utilities.BpmnFilter;
 import pl.edu.agh.kis.core.utilities.ColorStyledDocument;
 import pl.edu.agh.kis.core.utilities.GraphUtils;
+import pl.edu.agh.kis.exceptions.BadHeaderException;
 import pl.edu.agh.kis.exceptions.BadPatternException;
+import pl.edu.agh.kis.exceptions.NoLogicPatternDefinition;
 
 /**
  *
@@ -47,11 +75,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
  */
 public class GeneratorPanel extends javax.swing.JPanel {
 
-    private static final String DEFULT_FORMULAS = "/pl/edu/agh/kis/core/panels/defaultFormulas.txt";
-    private static final String USER_FORMULAS = "/pl/edu/agh/kis/core/panels/userFormulas.txt";
-    private Path defaultPath, userPath;
     private BufferedWriter writer;
-    private boolean isDefault;
     private File bpmnFile;
     private Graph<Node, Edge> graph;
     private PatternExtractor patternExtract;
@@ -60,34 +84,15 @@ public class GeneratorPanel extends javax.swing.JPanel {
      * Creates new form GeneratorPanel
      */
     public GeneratorPanel() {
-        initComponents();
-        initResources();
-        generateButton.setEnabled(false);
-        patternExtract = new PatternExtractor();
-    }
-
-    private void initResources() {
         try {
-            defaultPath = Paths.get(getClass().getClassLoader().getResource(DEFULT_FORMULAS).toURI());
-            userPath = Paths.get(getClass().getClassLoader().getResource(USER_FORMULAS).toURI());
-        } catch (URISyntaxException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+            initComponents();
+            generateButton.setEnabled(false);
+            patternExtract = new PatternExtractor();
+            logicFormulasTextPane.setText(org.openide.util.NbBundle.getMessage(GeneratorPanel.class, "GeneratorPanel.logicFormulasTextPane.text")); // NOI18N
 
-        logicFormulasTextPane.getDocument().addDocumentListener(new LogicFormulasDocumentListener());
-
-        try {
-            if (Files.readAllLines(userPath).isEmpty()) {
-                loadLogicalFormulas(defaultPath);
-                isDefault = true;
-                restoreDefaultButton.setEnabled(!isDefault);
-            } else {
-                loadLogicalFormulas(userPath);
-                isDefault = false;
-                restoreDefaultButton.setEnabled(!isDefault);
-            }
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
+        }catch(Exception e){
+            e.printStackTrace(System.out);
+            throw e;
         }
     }
 
@@ -111,7 +116,6 @@ public class GeneratorPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         logicFormulasTextPane = new javax.swing.JTextPane();
         chooseLogicFormulasFileButton = new javax.swing.JButton();
-        restoreDefaultButton = new javax.swing.JButton();
         generateButton = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
@@ -161,6 +165,7 @@ public class GeneratorPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(10, 5, 5, 10);
         add(graphPanel, gridBagConstraints);
 
+        patternsTextPane.setText(org.openide.util.NbBundle.getMessage(GeneratorPanel.class, "GeneratorPanel.patternsTextPane.text")); // NOI18N
         jScrollPane2.setViewportView(patternsTextPane);
         patternsTextPane.setDocument(new ColorStyledDocument(false));
 
@@ -188,6 +193,7 @@ public class GeneratorPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 10, 10);
         add(jScrollPane3, gridBagConstraints);
 
+        logicFormulasTextPane.setText(org.openide.util.NbBundle.getMessage(GeneratorPanel.class, "GeneratorPanel.logicFormulasTextPane.text")); // NOI18N
         jScrollPane1.setViewportView(logicFormulasTextPane);
         logicFormulasTextPane.setDocument(new ColorStyledDocument(true));
 
@@ -213,19 +219,6 @@ public class GeneratorPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 10, 5);
         add(chooseLogicFormulasFileButton, gridBagConstraints);
-
-        org.openide.awt.Mnemonics.setLocalizedText(restoreDefaultButton, org.openide.util.NbBundle.getMessage(GeneratorPanel.class, "GeneratorPanel.restoreDefaultButton.text")); // NOI18N
-        restoreDefaultButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                restoreDefaultButtonActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 10, 10);
-        add(restoreDefaultButton, gridBagConstraints);
 
         generateButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(generateButton, org.openide.util.NbBundle.getMessage(GeneratorPanel.class, "GeneratorPanel.generateButton.text")); // NOI18N
@@ -254,45 +247,62 @@ public class GeneratorPanel extends javax.swing.JPanel {
             pathTextField.setText(bpmnFile.getAbsolutePath());
 
             generateButton.setEnabled(true);
+            generateButtonActionPerformed(null);
         }
     }//GEN-LAST:event_chooseBpmnButtonActionPerformed
 
     private void generateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
+        generatedLogicTextPane.setText("");
+        patternsTextPane.setText("");
         BPMNParser parser = new BPMNParser();
         graph = parser.parseBPMN(bpmnFile);
         paintGraph();
-        selectLogicFormulas();
         try {
-            Node n = patternExtract.extractPatterns(graph, GraphUtils.START_NODE);
+            Graph g2 = parser.parseBPMN(bpmnFile);
+            Node n = patternExtract.extractPatterns(g2, GraphUtils.START_NODE);
             patternsTextPane.setText(n.toString());
+
+            TemporalLogicParser logicParser = new TemporalLogicParser();
+            Map<StructNodeType, LogicFormula> def;
+            try {
+                def = logicParser.parse(logicFormulasTextPane.getText());
+                TemporalLogicDefinition.setLogicDef(def);
+                String tempLogic = n.toTemporalLogic();
+                generatedLogicTextPane.setText(tempLogic);
+            } catch (BodyArgumentsException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage() + " line:" + e.getLine(), "Parsing temporal logic error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            } catch (DuplicateDefinitionException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage() + " line:" + e.getLine(), "Parsing temporal logic error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            } catch (BadHeaderException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage() + " line:" + e.getLine(), "Parsing temporal logic error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            } catch (NoLogicPatternDefinition e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Missing logic definition", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+
         } catch (UnexpectedException e) {
-            JOptionPane.showMessageDialog(this, "Error", e.toString(), JOptionPane.ERROR_MESSAGE);
-        }catch (BadPatternException e) {
+            JOptionPane.showMessageDialog(this, "Error", e.getMessage(), JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } catch (BadPatternException e) {
             JOptionPane.showMessageDialog(this, "Bad Pattern", e.getMessage(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
 
     }//GEN-LAST:event_generateButtonActionPerformed
 
-    private void selectLogicFormulas() {
-        if (isDefault) {
-            // Set parent formula file to defaultFormulas.txt
-            try {
-                writer = Files.newBufferedWriter(userPath);
-                writer.close();
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        } else {
-            try {
-                // Set parent formula file to userFormulas.txt
-                writer = Files.newBufferedWriter(userPath);
-                writer.write(logicFormulasTextPane.getText());
-                writer.close();
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+    private Graph cloneGraph(Graph<Node, Edge> src) {
+        Graph<Node, Edge> dest = new DirectedSparseGraph();
+        for (Node v : src.getVertices()) {
+            dest.addVertex(v);
         }
+
+        for (Edge e : src.getEdges()) {
+            dest.addEdge(e, src.getIncidentVertices(e));
+        }
+        return dest;
     }
 
     private void chooseLogicFormulasFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseLogicFormulasFileButtonActionPerformed
@@ -301,44 +311,38 @@ public class GeneratorPanel extends javax.swing.JPanel {
         int returnVal = fc.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
-            try {
-                writer = Files.newBufferedWriter(userPath);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            Consumer<String> textConsumer = (String line) -> {
-                try {
-                    writer.write(line);
-                    writer.newLine();
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            };
-            try {
-                Files.lines(Paths.get(file.getAbsolutePath())).forEachOrdered(textConsumer);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            } finally {
-                try {
-                    writer.close();
-                    loadLogicalFormulas(userPath);
-                    isDefault = false;
-                    restoreDefaultButton.setEnabled(!isDefault);
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            }
+            loadLogicalFormulas(Paths.get(file.getAbsolutePath()));
+//            try {
+//                writer = Files.newBufferedWriter(userPath);
+//            } catch (IOException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
+//            Consumer<String> textConsumer = (String line) -> {
+//                try {
+//                    writer.write(line);
+//                    writer.newLine();
+//                } catch (IOException ex) {
+//                    Exceptions.printStackTrace(ex);
+//                }
+//            };
+//            try {
+//                Files.lines(Paths.get(file.getAbsolutePath())).forEachOrdered(textConsumer);
+//            } catch (IOException ex) {
+//                Exceptions.printStackTrace(ex);
+//            } finally {
+//                try {
+//                    writer.close();
+//                    loadLogicalFormulas(userPath);
+//                    isDefault = false;
+//                    restoreDefaultButton.setEnabled(!isDefault);
+//                } catch (IOException ex) {
+//                    Exceptions.printStackTrace(ex);
+//                }
+//            }
         }
     }//GEN-LAST:event_chooseLogicFormulasFileButtonActionPerformed
 
-    private void restoreDefaultButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_restoreDefaultButtonActionPerformed
-        loadLogicalFormulas(defaultPath);
-        isDefault = true;
-        restoreDefaultButton.setEnabled(!isDefault);
-    }//GEN-LAST:event_restoreDefaultButtonActionPerformed
-
     private void loadLogicalFormulas(Path path) {
-        logicFormulasTextPane.setText("");
         StyledDocument doc = logicFormulasTextPane.getStyledDocument();
         Consumer<String> textConsumer = (String line) -> {
             try {
@@ -368,6 +372,7 @@ public class GeneratorPanel extends javax.swing.JPanel {
 
         // create and add new graphPanel
         graphPanel = new BasicVisualizationServer<AtomNode, Edge>(layout);
+        ((BasicVisualizationServer) graphPanel).getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
         graphPanel.addComponentListener(new ComponentAdapter() {
             private Dimension last_size = null;
 
@@ -415,26 +420,6 @@ public class GeneratorPanel extends javax.swing.JPanel {
         this.repaint();
     }
 
-    private class LogicFormulasDocumentListener implements DocumentListener {
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            isDefault = false;
-            restoreDefaultButton.setEnabled(!isDefault);
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            isDefault = false;
-            restoreDefaultButton.setEnabled(!isDefault);
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            isDefault = false;
-            restoreDefaultButton.setEnabled(!isDefault);
-        }
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton chooseBpmnButton;
@@ -448,6 +433,5 @@ public class GeneratorPanel extends javax.swing.JPanel {
     private javax.swing.JTextPane logicFormulasTextPane;
     private javax.swing.JTextField pathTextField;
     private javax.swing.JTextPane patternsTextPane;
-    private javax.swing.JButton restoreDefaultButton;
     // End of variables declaration//GEN-END:variables
 }

@@ -23,41 +23,76 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package pl.edu.agh.kis.patterns;
-
-import edu.uci.ics.jung.graph.Graph;
-import java.rmi.UnexpectedException;
-import pl.edu.agh.kis.core.PatternExtractor;
-import pl.edu.agh.kis.core.data.AtomNode;
-import pl.edu.agh.kis.core.data.Node;
-import pl.edu.agh.kis.core.data.NodeType;
-import pl.edu.agh.kis.core.data.StructNode;
-import pl.edu.agh.kis.core.data.StructNodeType;
-import pl.edu.agh.kis.exceptions.BadPatternException;
+package pl.edu.agh.kis.core.data;
 
 /**
  *
- * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
+ * @author Adam Świeżowski, Jakub Piotrowski
  */
-public class Sequence extends Pattern {
+public class LogicFormula {
+    private String left, inner1, inner2, right;
+    private String body;
 
-    
-    
-    @Override
-    public StructNode findPattern(Graph g, Node start) throws BadPatternException, UnexpectedException {
-        StructNode snode = null;
-        if (g.getOutEdges(start).size() == 1) {
-            PatternExtractor pe = new PatternExtractor();
-            Node node = pe.extractPatterns(g, (AtomNode) g.getSuccessors(start).iterator().next());
-            if(node.getType()==NodeType.STRUCT){
-                StructNode tree = (StructNode) node;
-                if(Pattern.isReversePattern(tree)){
-                    return tree;
-                }
-            }
-            snode = new StructNode(start, node, null, null, StructNodeType.SEQUENCE);
-        }
-        return snode;
+    public LogicFormula() {
     }
 
+    public LogicFormula(String left, String inner1, String inner2, String rght, String body) {
+        this.left = left;
+        this.inner1 = inner1;
+        this.inner2 = inner2;
+        this.right = rght;
+        this.body = body;
+    }
+
+    public String getLeft() {
+        return left;
+    }
+
+    public void setLeft(String left) {
+        this.left = left;
+    }
+
+    public String getInner1() {
+        return inner1;
+    }
+
+    public void setInner1(String inner1) {
+        this.inner1 = inner1;
+    }
+
+    public String getInner2() {
+        return inner2;
+    }
+
+    public void setInner2(String inner2) {
+        this.inner2 = inner2;
+    }
+
+    public String getRight() {
+        return right;
+    }
+
+    public void setRight(String rght) {
+        this.right = rght;
+    }
+
+    public String getBody() {
+        return body;
+    }
+    
+    public void appendBody(String s){
+        if(body==null){
+            body = new String();
+        }
+        body+=s;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+    
+    
+    
+    
+    
 }
