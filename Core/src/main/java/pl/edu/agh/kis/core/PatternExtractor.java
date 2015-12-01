@@ -40,6 +40,7 @@ import pl.edu.agh.kis.patterns.Pattern;
 import pl.edu.agh.kis.patterns.Sequence;
 import pl.edu.agh.kis.patterns.SimpleMerge;
 import pl.edu.agh.kis.patterns.SynchronizingMerge;
+import pl.edu.agh.kis.patterns.Discriminator;
 
 /**
  *
@@ -51,7 +52,8 @@ public class PatternExtractor {
 
     static {
         PATTERN_PRIORITY = new ArrayList<>();
-	PATTERN_PRIORITY.add(new SynchronizingMerge());
+		PATTERN_PRIORITY.add(new SynchronizingMerge());
+		PATTERN_PRIORITY.add(new Discriminator());
         PATTERN_PRIORITY.add(new ImplicitTermination());
         PATTERN_PRIORITY.add(new MultipleChoice());
         PATTERN_PRIORITY.add(new SynchronizingMerge());
