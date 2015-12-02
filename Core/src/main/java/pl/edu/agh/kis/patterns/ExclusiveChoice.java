@@ -29,7 +29,6 @@ import edu.uci.ics.jung.algorithms.filters.FilterUtils;
 import edu.uci.ics.jung.graph.Graph;
 import java.rmi.UnexpectedException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import pl.edu.agh.kis.core.PatternExtractor;
@@ -46,28 +45,26 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
  *
  * @author Jakub Piotrowski
  */
-public class Discriminator extends Pattern {
+public class ExclusiveChoice extends Pattern {
 
     @Override
     public StructNode findPattern(Graph g, Node start) throws BadPatternException, UnexpectedException {
         StructNode snode = null;
-        if (g.getOutEdges(start).size() == 2 && start.getType() == NodeType.ATOM && ((AtomNode) start).getAtomType() == AtomNodeType.TASK) {
+        if (g.getOutEdges(start).size() == 2 && start.getType() == NodeType.ATOM && ((AtomNode) start).getAtomType() == AtomNodeType.EXCLUSIVE_GATEWAY) {
             Iterator<Edge> iter = g.getOutEdges(start).iterator();
             List<Node> pathNodes1 = new ArrayList<>();
             List<Node> pathNodes2 = new ArrayList<>();
             AtomNode startPath1 = (AtomNode) iter.next().getEnd();
             AtomNode startPath2 = (AtomNode) iter.next().getEnd();
-            AtomNode endPath1 = findEndPatternNode(g, startPath1, Arrays.asList(AtomNodeType.EXCLUSIVE_GATEWAY), 0, pathNodes1);
-            AtomNode endPath2 = findEndPatternNode(g, startPath2, Arrays.asList(AtomNodeType.EXCLUSIVE_GATEWAY), 0, pathNodes2);
-            if (endPath1 == null || endPath2 == null) {
-                return null;
-            } else if (!endPath1.equals(endPath2)) {
-                throw new UnexpectedException("Bad end of pattern");
+            AtomNode endPath1 = getEndNode(g, startPath1, pathNodes1);
+            AtomNode endPath2 = getEndNode(g, startPath2, pathNodes2);
+            if (endPath1.equals(endPath2)) {
+                throw new UnexpectedException("Paths can not be merged");
             }
             Graph subgraph1 = FilterUtils.createInducedSubgraph(pathNodes1, g);
             Graph subgraph2 = FilterUtils.createInducedSubgraph(pathNodes2, g);
             PatternExtractor pe = new PatternExtractor();
-            snode = new StructNode(start, endPath1, pe.extractPatterns(subgraph1, startPath1), pe.extractPatterns(subgraph2, startPath2), StructNodeType.DISCRIMINATOR);
+            snode = new StructNode(start, pe.extractPatterns(subgraph2, startPath2), pe.extractPatterns(subgraph1, startPath1), null, StructNodeType.EXCLUSIVE_CHOICE);
         }
         return snode;
     }
