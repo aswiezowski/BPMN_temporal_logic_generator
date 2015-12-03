@@ -43,7 +43,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 
 /**
  *
- * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
+ * @author Jakub Piotrowski
  */
 public class ParallelSplit extends Pattern{
     
