@@ -28,6 +28,7 @@ package pl.edu.agh.kis.core.data;
 /**
  *
  * @author Adam Świeżowski, Jakub Piotrowski
+ * Represents BPMN pattern type
  */
 public enum StructNodeType {
 
@@ -35,6 +36,11 @@ public enum StructNodeType {
     EXCLUSIVE_CHOICE, IMPLICIT_TERMINATION, MULTIPLE_MERGE, DISCRIMINATOR, 
     SYNCHRONIZING_MERGE;
     
+    /**
+     * 
+     * @param type pattern type
+     * @return the number of nodes in the pattern
+     */
     public static int getArgsCount(StructNodeType type){
         int args = 2;
         if(type==SYNCHRONIZING_MERGE || type==DISCRIMINATOR || type==MULTIPLE_MERGE){

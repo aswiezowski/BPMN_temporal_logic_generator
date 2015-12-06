@@ -45,6 +45,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 /**
  *
  * @author Jakub Piotrowski
+ * MultipleMerge - BPMN pattern
  */
 public class MultipleMerge extends Pattern {
 

@@ -66,13 +66,13 @@ import pl.edu.agh.kis.core.utilities.BpmnFilter;
 import pl.edu.agh.kis.core.utilities.ColorStyledDocument;
 import pl.edu.agh.kis.core.utilities.GraphUtils;
 import pl.edu.agh.kis.exceptions.BadHeaderException;
-import pl.edu.agh.kis.exceptions.BadPatternException;
 import pl.edu.agh.kis.exceptions.NoLogicPatternDefinition;
 import pl.edu.agh.kis.exceptions.BadPatternException;
 
 /**
  *
  * @author Jakub Piotrowski
+ * Main panel, which contains whole application functionality
  */
 public class GeneratorPanel extends javax.swing.JPanel {
 

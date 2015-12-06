@@ -27,7 +27,8 @@ package pl.edu.agh.kis.core.data;
 
 /**
  *
- * @author Adam Świeżowski, Jakub Piotrowski
+ * @author Jakub Piotrowski
+ * Class represents temporal logic formula
  */
 public class LogicFormula {
     private String left, inner1, inner2, right;

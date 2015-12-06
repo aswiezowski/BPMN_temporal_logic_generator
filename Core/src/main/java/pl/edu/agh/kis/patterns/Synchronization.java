@@ -44,6 +44,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 /**
  *
  * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
+ * Synchronization - BPMN pattern
  */
 public class Synchronization extends Pattern{
     

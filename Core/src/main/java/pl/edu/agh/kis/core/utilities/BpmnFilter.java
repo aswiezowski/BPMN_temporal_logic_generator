@@ -31,6 +31,7 @@ import javax.swing.filechooser.FileFilter;
 /**
  *
  * @author Jakub Piotrowski
+ * Filters only BPMN files
  */
 public class BpmnFilter extends FileFilter{
 

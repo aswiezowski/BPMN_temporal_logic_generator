@@ -30,6 +30,7 @@ import pl.edu.agh.kis.exceptions.NoLogicPatternDefinition;
 /**
  *
  * @author Adam Świeżowski, Jakub Piotrowski
+ * Interface representing the graph node
  */
 public interface Node {
 

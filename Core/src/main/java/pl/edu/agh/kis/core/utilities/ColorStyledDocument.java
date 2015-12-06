@@ -35,6 +35,7 @@ import javax.swing.text.StyleContext;
 /**
  *
  * @author Jakub Piotrowski
+ * Highlights of temporal logic syntax
  */
 public class ColorStyledDocument extends DefaultStyledDocument {
 

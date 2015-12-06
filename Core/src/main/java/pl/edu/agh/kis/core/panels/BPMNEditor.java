@@ -48,6 +48,7 @@ import org.openide.util.Exceptions;
 /**
  *
  * @author Adam Świeżowski
+ * Contains BPMN editor
  */
 public class BPMNEditor extends javax.swing.JPanel {
 

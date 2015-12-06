@@ -39,6 +39,7 @@ import pl.edu.agh.kis.exceptions.BadHeaderException;
 /**
  *
  * @author Adam Świeżowski, Jakub Piotrowski
+ * Parses the specified temporal logic
  */
 public class TemporalLogicParser {
 
@@ -70,6 +71,11 @@ public class TemporalLogicParser {
     public TemporalLogicParser() {
     }
 
+    /**
+     * Parses temporal logic definition header
+     * @param line temporal logic header
+     * @return struct of pattern type and temporal logic formula
+     */
     private Entry<StructNodeType, LogicFormula> parseHeader(String line) {
         Entry<StructNodeType, LogicFormula> patternEntry = null;
         LogicFormula formula = null;
@@ -107,6 +113,14 @@ public class TemporalLogicParser {
         return valid;
     }
 
+    /**
+     * Parses whole temporal logic definition
+     * @param temporalLogic temporal logic definition
+     * @return struct of pattern type and temporal logic formula
+     * @throws BodyArgumentsException
+     * @throws DuplicateDefinitionException
+     * @throws BadHeaderException 
+     */
     public HashMap<StructNodeType, LogicFormula> parse(String temporalLogic) throws BodyArgumentsException, DuplicateDefinitionException, BadHeaderException {
         HashMap<StructNodeType, LogicFormula> logicDef = new HashMap<>();
         Scanner scanner = new Scanner(temporalLogic);

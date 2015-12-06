@@ -38,6 +38,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 /**
  *
  * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
+ * Sequence - BPMN pattern
  */
 public class Sequence extends Pattern {
 

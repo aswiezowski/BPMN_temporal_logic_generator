@@ -37,6 +37,7 @@ import org.openide.util.Exceptions;
 /**
  *
  * @author Jakub Piotrowski
+ * Draws main application image
  */
 public class ImagePanel extends JPanel {
 

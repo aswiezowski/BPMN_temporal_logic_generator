@@ -44,6 +44,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 /**
  *
  * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
+ * MultipleChoice - BPMN pattern
  */
 public class MultipleChoice  extends Pattern {
     @Override

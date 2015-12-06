@@ -45,6 +45,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 /**
  *
  * @author Jakub Piotrowski
+ * Discriminator - BPMN pattern
  */
 public class Discriminator extends Pattern {
 

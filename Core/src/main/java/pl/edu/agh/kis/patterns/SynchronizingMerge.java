@@ -45,6 +45,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 /**
  *
  * @author Jakub Piotrowski
+ * SynchronizingMerge - BPMN pattern
  */
 public class SynchronizingMerge extends Pattern {
 

@@ -32,7 +32,8 @@ import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * Top component which displays something.
+ * @author Jakub Piotrowski
+ * Application main top component which contains generator panel
  */
 @ConvertAsProperties(
         dtd = "-//pl.edu.agh.kis.core//Core//EN",

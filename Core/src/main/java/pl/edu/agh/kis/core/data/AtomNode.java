@@ -32,6 +32,7 @@ import java.util.Set;
 /**
  *
  * @author Adam Świeżowski, Jakub Piotrowski
+ * Represents basic node graph
  */
 public class AtomNode implements Node {
 

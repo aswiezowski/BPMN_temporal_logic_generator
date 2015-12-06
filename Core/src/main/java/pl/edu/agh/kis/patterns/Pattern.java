@@ -42,6 +42,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 /**
  *
  * @author Adam Świeżowski <adam.swiezowski+projects [at] gmail [dot] com>
+ * Represents BPMN pattern
  */
 public abstract class Pattern {
 

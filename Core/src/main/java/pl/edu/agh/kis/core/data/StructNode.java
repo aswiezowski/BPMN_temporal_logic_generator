@@ -32,6 +32,7 @@ import pl.edu.agh.kis.exceptions.NoLogicPatternDefinition;
 /**
  *
  * @author Adam Świeżowski, Jakub Piotrowski
+ * Represents complex node graph. Contains other nodes inside
  */
 public class StructNode implements Node {
 
@@ -62,6 +63,11 @@ public class StructNode implements Node {
         return name;
     }
     
+    /**
+     * Coverts this struct node into temporal logic formula
+     * @return temporal logic formula
+     * @throws NoLogicPatternDefinition 
+     */
     @Override
     public String toTemporalLogic() throws NoLogicPatternDefinition{
         String temporalLogic = null;

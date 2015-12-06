@@ -40,7 +40,8 @@ import pl.edu.agh.kis.core.utilities.GraphUtils;
 
 /**
  *
- * @author Adam Świeżowski, Jakub Piotrowski
+ * @author Adam Świeżowski
+ * Class responsible for parsing the BPMN file 
  */
 public class BPMNParser {
 

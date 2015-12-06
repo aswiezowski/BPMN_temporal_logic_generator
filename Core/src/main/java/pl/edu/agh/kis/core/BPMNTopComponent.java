@@ -32,7 +32,8 @@ import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * Top component which displays something.
+ * @author Adam Świeżowski
+ * Application top component which contains BPMN editor
  */
 @ConvertAsProperties(
         dtd = "-//pl.edu.agh.kis.core//BPMN//EN",

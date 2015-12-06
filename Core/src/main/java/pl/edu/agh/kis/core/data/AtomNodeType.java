@@ -28,11 +28,17 @@ package pl.edu.agh.kis.core.data;
 /**
  *
  * @author Adam Świeżowski, Jakub Piotrowski
+ * Represents BPMN node type
  */
 public enum AtomNodeType {
 
     EVENT, START_EVENT, END_EVENT, TASK, USER_TASK, SEND_TASK, RECEIVE_TASK, MANUAL_TASK, BUSINESS_RULE_TASK, SERVICE_TASK, SCRIPT_TASK, PARALLEL_GATEWAY, INCLUSIVE_GATEWAY, EXCLUSIVE_GATEWAY;
 
+    /**
+     * Converts BPMN string to class type
+     * @param BPMNTag BPMN tag as strng
+     * @return the appropriate type
+     */
     public static AtomNodeType convertBPMNtoEnum(String BPMNTag) {
         if ("startEvent".equalsIgnoreCase(BPMNTag)) {
             return START_EVENT;

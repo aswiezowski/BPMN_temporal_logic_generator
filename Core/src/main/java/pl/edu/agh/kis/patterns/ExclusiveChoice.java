@@ -44,6 +44,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 /**
  *
  * @author Jakub Piotrowski
+ * ExclusiveChoice - BPMN pattern
  */
 public class ExclusiveChoice extends Pattern {
 

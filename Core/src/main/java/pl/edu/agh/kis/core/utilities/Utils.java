@@ -30,6 +30,7 @@ import java.io.File;
 /**
  *
  * @author Jakub Piotrowski
+ * Filters only image types files
  */
 public class Utils {
 

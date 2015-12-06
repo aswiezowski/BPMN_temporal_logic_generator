@@ -46,11 +46,15 @@ import pl.edu.agh.kis.patterns.SynchronizingMerge;
 /**
  *
  * @author Adam Świeżowski, Jakub Piotrowski
+ * Class contains a list of priorities by which patterns have to be searched
  */
 public class PatternExtractor {
 
     public final static List<Pattern> PATTERN_PRIORITY;
 
+    /**
+     * Initialization priority list patterns
+     */
     static {
         PATTERN_PRIORITY = new ArrayList<>();
         PATTERN_PRIORITY.add(new SynchronizingMerge());
@@ -64,6 +68,14 @@ public class PatternExtractor {
         PATTERN_PRIORITY.add(new Sequence());
     }
 
+    /**
+     * Extracts the patterns of graph
+     * @param g graph to extract
+     * @param startNode graph start node, where algorithm begins search
+     * @return the node where the exploration ends
+     * @throws UnexpectedException
+     * @throws BadPatternException 
+     */
     public Node extractPatterns(Graph g, Node startNode) throws UnexpectedException, BadPatternException {
 
         StructNode patternTree = null;

@@ -44,6 +44,7 @@ import pl.edu.agh.kis.exceptions.BadPatternException;
 /**
  *
  * @author Jakub Piotrowski
+ * ParallelSplit - BPMN pattern
  */
 public class ParallelSplit extends Pattern{
     

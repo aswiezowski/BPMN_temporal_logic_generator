@@ -30,6 +30,7 @@ import java.util.Map;
 /**
  *
  * @author Adam Świeżowski, Jakub Piotrowski
+ * Represents list of temporal logic formulas for each BPMN pattern
  */
 public class TemporalLogicDefinition {
     
