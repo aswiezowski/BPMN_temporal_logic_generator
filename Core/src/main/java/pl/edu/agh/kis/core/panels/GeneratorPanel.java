@@ -312,38 +312,16 @@ public class GeneratorPanel extends javax.swing.JPanel {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             loadLogicalFormulas(Paths.get(file.getAbsolutePath()));
-//            try {
-//                writer = Files.newBufferedWriter(userPath);
-//            } catch (IOException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
-//            Consumer<String> textConsumer = (String line) -> {
-//                try {
-//                    writer.write(line);
-//                    writer.newLine();
-//                } catch (IOException ex) {
-//                    Exceptions.printStackTrace(ex);
-//                }
-//            };
-//            try {
-//                Files.lines(Paths.get(file.getAbsolutePath())).forEachOrdered(textConsumer);
-//            } catch (IOException ex) {
-//                Exceptions.printStackTrace(ex);
-//            } finally {
-//                try {
-//                    writer.close();
-//                    loadLogicalFormulas(userPath);
-//                    isDefault = false;
-//                    restoreDefaultButton.setEnabled(!isDefault);
-//                } catch (IOException ex) {
-//                    Exceptions.printStackTrace(ex);
-//                }
-//            }
         }
     }//GEN-LAST:event_chooseLogicFormulasFileButtonActionPerformed
 
     private void loadLogicalFormulas(Path path) {
         StyledDocument doc = logicFormulasTextPane.getStyledDocument();
+        try {
+            doc.remove(0, doc.getLength());
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
         Consumer<String> textConsumer = (String line) -> {
             try {
                 doc.insertString(doc.getLength(), line + "\n", null);
