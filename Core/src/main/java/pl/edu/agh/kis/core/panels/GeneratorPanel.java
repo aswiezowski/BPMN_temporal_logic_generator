@@ -252,6 +252,10 @@ public class GeneratorPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_chooseBpmnButtonActionPerformed
 
+    public static String denull(String s){
+        return (s==null?"":s);
+    }
+    
     private void generateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
         generatedLogicTextPane.setText("");
         patternsTextPane.setText("");
@@ -271,16 +275,16 @@ public class GeneratorPanel extends javax.swing.JPanel {
                 String tempLogic = n.toTemporalLogic();
                 generatedLogicTextPane.setText(tempLogic);
             } catch (BodyArgumentsException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage() + " line:" + e.getLine(), "Parsing temporal logic error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Bad arguments " + denull(e.getMessage()) + " line:" + e.getLine(), "Parsing temporal logic error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             } catch (DuplicateDefinitionException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage() + " line:" + e.getLine(), "Parsing temporal logic error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Duplicated Definition " + denull(e.getMessage()) + " line:" + e.getLine(), "Parsing temporal logic error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             } catch (BadHeaderException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage() + " line:" + e.getLine(), "Parsing temporal logic error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Bad logic formula headers "+denull(e.getMessage()) + " line:" + e.getLine(), "Parsing temporal logic error", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             } catch (NoLogicPatternDefinition e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(), "Missing logic definition", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Missing pattern logic definition"+ denull(e.getMessage()), "Missing logic definition", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
 
